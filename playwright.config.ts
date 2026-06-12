@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-
+import { chromium } from "playwright";
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -11,6 +11,7 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+
 export default defineConfig({
   testDir: "./tests",
   /* Run tests in files in parallel */
@@ -35,20 +36,61 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: "lambdatest-chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        connectOptions: {
+          wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+            JSON.stringify({
+              browserName: "Chrome",
+              browserVersion: "latest",
+              "LT:Options": {
+                platform: "Windows 11",
+                project: "Playwright Certification Work",
+                build: "Build - Slider & Form Submissions",
+                user: process.env.LT_USERNAME,
+                accessKey: process.env.LT_ACCESS_KEY,
+                video: true,
+                network: true,
+                console: true,
+              },
+            }),
+          )}`,
+        },
+      },
+    },
+    {
+      name: "testmu-mac-firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        connectOptions: {
+          wsEndpoint: `wss://cdp.lambdatest.com/playwright?capabilities=${encodeURIComponent(
+            JSON.stringify({
+              browserName: "pw-firefox",
+              browserVersion: "latest",
+              "LT:Options": {
+                user: process.env.LT_USERNAME,
+                accessKey: process.env.LT_ACCESS_KEY,
+                platform: "MacOS Sonoma",
+                project: "Playwright Cross-Browser Suite",
+                build: "Build - Mac Firefox Execution",
+                video: true,
+                network: true,
+                console: true,
+              },
+            }),
+          )}`,
+        },
+      },
+    },
+    {
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
         channel: "chrome",
 
         launchOptions: {
-          // 🟢 Cloudflare flags headless browsers immediately. Run headed locally!
-          headless: false,
-          args: [
-            // 🟢 Removes the 'navigator.webdriver = true' flag that blocks bots
-            "--disable-blink-features=AutomationControlled",
-            "--no-sandbox",
-            "--start-maximized",
-          ],
+          slowMo: 300,
         },
       },
     },

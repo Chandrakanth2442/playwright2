@@ -8,6 +8,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@lambdatest/playwright-driver": "^1.0.7",
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.3"
   },
